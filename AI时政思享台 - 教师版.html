@@ -405,21 +405,66 @@
         </div>
     </div>
 
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
-    import { getFirestore, doc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
+<script>
+    const JSONBIN_API_KEY = "$2a$10$ZxmQutls6KL.PZIXJIH/muOaT8duYjQW9AfdyQLijLRZd90.9EJTq";
+    const BIN_ID_KEY = 'ai_shizheng_bin_id';
+    let binId = localStorage.getItem(BIN_ID_KEY);
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyBKB9h-jmxkJ_paq82rdeXdHOVAS2lGZtA",
-      authDomain: "ai-shizheng-tongbu.firebaseapp.com",
-      projectId: "ai-shizheng-tongbu",
-      storageBucket: "ai-shizheng-tongbu.firebasestorage.app",
-      messagingSenderId: "168414204881",
-      appId: "1:168414204881:web:2a8876bc06b31e7c2f06f0"
-    };
+    async function initJSONBin() {
+        if (!binId) {
+            try {
+                const res = await fetch('https://api.jsonbin.io/v3/b', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Master-Key': JSONBIN_API_KEY
+                    },
+                    body: JSON.stringify({ published: [], pending: [] })
+                });
+                const data = await res.json();
+                binId = data.metadata.id;
+                localStorage.setItem(BIN_ID_KEY, binId);
+            } catch(e) {
+                console.error('初始化失败:', e);
+            }
+        }
+    }
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+    async function saveData() {
+        if (!binId) await initJSONBin();
+        try {
+            await fetch(`https://api.jsonbin.io/v3/b/${binId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Master-Key': JSONBIN_API_KEY
+                },
+                body: JSON.stringify({
+                    published: publishedNews,
+                    pending: pendingNews,
+                    lastUpdate: new Date().toISOString()
+                })
+            });
+        } catch(e) {
+            console.error('保存失败:', e);
+        }
+    }
+
+    async function loadData() {
+        await initJSONBin();
+        try {
+            const res = await fetch(`https://api.jsonbin.io/v3/b/${binId}`, {
+                headers: { 'X-Master-Key': JSONBIN_API_KEY }
+            });
+            const data = await res.json();
+            if (data.record) {
+                publishedNews = data.record.published || [];
+                pendingNews = data.record.pending || [];
+            }
+        } catch(e) {
+            console.error('加载失败:', e);
+        }
+    }
 
     const TEACHER_PASSWORD = '20011012qq';
     
@@ -436,35 +481,6 @@
         } else {
             document.getElementById('loginError').style.display = 'block';
         }
-    }
-    
-    function loadData() {
-        // 监听已发布新闻变化
-        onSnapshot(doc(db, 'data', 'published'), (docSnap) => {
-            if (docSnap.exists() && docSnap.data().news) {
-                publishedNews = docSnap.data().news;
-                renderPublished();
-            }
-        });
-        
-        // 监听待审核新闻变化
-        onSnapshot(doc(db, 'data', 'pending'), (docSnap) => {
-            if (docSnap.exists() && docSnap.data().news) {
-                pendingNews = docSnap.data().news;
-                renderPending();
-            }
-        });
-    }
-    
-    function saveData() {
-        setDoc(doc(db, 'data', 'published'), {
-            news: publishedNews,
-            lastUpdate: new Date().toISOString()
-        });
-        setDoc(doc(db, 'data', 'pending'), {
-            news: pendingNews,
-            lastUpdate: new Date().toISOString()
-        });
     }
     
     function render() {

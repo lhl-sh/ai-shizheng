@@ -1185,22 +1185,67 @@
     </div>
     
     <!-- 教师登录弹窗 -->
-    <script type="module">
-    // ======================== Firebase 配置 ========================
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
-    import { getFirestore, collection, doc, getDocs, setDoc, onSnapshot, deleteField } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
+    <script>
+    // ======================== JSONBin 配置 ========================
+    const JSONBIN_API_KEY = "$2a$10$ZxmQutls6KL.PZIXJIH/muOaT8duYjQW9AfdyQLijLRZd90.9EJTq";
+    const BIN_ID_KEY = 'ai_shizheng_bin_id';
+    let binId = localStorage.getItem(BIN_ID_KEY);
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyBKB9h-jmxkJ_paq82rdeXdHOVAS2lGZtA",
-      authDomain: "ai-shizheng-tongbu.firebaseapp.com",
-      projectId: "ai-shizheng-tongbu",
-      storageBucket: "ai-shizheng-tongbu.firebasestorage.app",
-      messagingSenderId: "168414204881",
-      appId: "1:168414204881:web:2a8876bc06b31e7c2f06f0"
-    };
+    async function initJSONBin() {
+        if (!binId) {
+            try {
+                const res = await fetch('https://api.jsonbin.io/v3/b', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Master-Key': JSONBIN_API_KEY
+                    },
+                    body: JSON.stringify({ published: [], pending: [] })
+                });
+                const data = await res.json();
+                binId = data.metadata.id;
+                localStorage.setItem(BIN_ID_KEY, binId);
+            } catch(e) {
+                console.error('初始化失败:', e);
+            }
+        }
+    }
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+    async function saveData() {
+        if (!binId) await initJSONBin();
+        try {
+            await fetch(`https://api.jsonbin.io/v3/b/${binId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Master-Key': JSONBIN_API_KEY
+                },
+                body: JSON.stringify({
+                    published: publishedNews,
+                    pending: pendingNews,
+                    lastUpdate: new Date().toISOString()
+                })
+            });
+        } catch(e) {
+            console.error('保存失败:', e);
+        }
+    }
+
+    async function loadData() {
+        await initJSONBin();
+        try {
+            const res = await fetch(`https://api.jsonbin.io/v3/b/${binId}`, {
+                headers: { 'X-Master-Key': JSONBIN_API_KEY }
+            });
+            const data = await res.json();
+            if (data.record) {
+                publishedNews = data.record.published || [];
+                pendingNews = data.record.pending || [];
+            }
+        } catch(e) {
+            console.error('加载失败:', e);
+        }
+    }
 
     // ======================== API Key ========================
     const DEEPSEEK_API_KEY = "sk-3109827d3cf246d0bc3e21554aed72db";
@@ -1213,8 +1258,6 @@
     let searchKeyword = "";
     let selectedNewsId = null;
     let displayCount = 6;
-    let unsubscribePublished = null;
-    let unsubscribePending = null;
     
     // 分类配置
     const categoryConfig = {
@@ -1301,41 +1344,6 @@
         }
         
         return `⚠️ 调用 AI 失败: ${lastError}`;
-    }
-    
-    // ======================== 数据存储 (Firebase) ========================
-    async function saveData() {
-        try {
-            // 保存已发布新闻
-            await setDoc(doc(db, 'data', 'published'), {
-                news: publishedNews,
-                lastUpdate: new Date().toISOString()
-            });
-            // 保存待审核新闻
-            await setDoc(doc(db, 'data', 'pending'), {
-                news: pendingNews,
-                lastUpdate: new Date().toISOString()
-            });
-        } catch(e) {
-            console.error('保存失败:', e);
-        }
-    }
-    
-    function loadData() {
-        // 监听已发布新闻变化
-        unsubscribePublished = onSnapshot(doc(db, 'data', 'published'), (docSnap) => {
-            if (docSnap.exists() && docSnap.data().news) {
-                publishedNews = docSnap.data().news;
-                renderCards();
-            }
-        });
-        
-        // 监听待审核新闻变化
-        unsubscribePending = onSnapshot(doc(db, 'data', 'pending'), (docSnap) => {
-            if (docSnap.exists() && docSnap.data().news) {
-                pendingNews = docSnap.data().news;
-            }
-        });
     }
     
     // ======================== 渲染函数 ========================
