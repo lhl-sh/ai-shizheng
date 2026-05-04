@@ -407,33 +407,11 @@
 
 <script>
     const JSONBIN_API_KEY = "$2a$10$ZxmQutls6KL.PZIXJIH/muOaT8duYjQW9AfdyQLijLRZd90.9EJTq";
-    const BIN_ID_KEY = 'ai_shizheng_bin_id';
-    let binId = localStorage.getItem(BIN_ID_KEY);
-
-    async function initJSONBin() {
-        if (!binId) {
-            try {
-                const res = await fetch('https://api.jsonbin.io/v3/b', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-Master-Key': JSONBIN_API_KEY
-                    },
-                    body: JSON.stringify({ published: [], pending: [] })
-                });
-                const data = await res.json();
-                binId = data.metadata.id;
-                localStorage.setItem(BIN_ID_KEY, binId);
-            } catch(e) {
-                console.error('初始化失败:', e);
-            }
-        }
-    }
+    const BIN_ID = "69f8233c856a682189a2e9c9";
 
     async function saveData() {
-        if (!binId) await initJSONBin();
         try {
-            await fetch(`https://api.jsonbin.io/v3/b/${binId}`, {
+            await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -451,9 +429,8 @@
     }
 
     async function loadData() {
-        await initJSONBin();
         try {
-            const res = await fetch(`https://api.jsonbin.io/v3/b/${binId}`, {
+            const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
                 headers: { 'X-Master-Key': JSONBIN_API_KEY }
             });
             const data = await res.json();
