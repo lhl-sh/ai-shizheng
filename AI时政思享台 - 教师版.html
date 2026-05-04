@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>班级时政汇 - 教师审核后台</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: linear-gradient(135deg, #fff5f5 0%, #ffffff 100%);
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            min-height: 100vh;
+        }
+        
+        /* 顶部区域 */
+        .top-bar {
+            background: linear-gradient(135deg, #c62828 0%, #b71c1c 100%);
+            color: white;
+            padding: 22px 36px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 20px rgba(198, 40, 40, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        .top-bar::after {
+            content: '🚩';
+            position: absolute;
+            right: 80px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 3rem;
+            opacity: 0.15;
+        }
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .logo-icon {
+            font-size: 2rem;
+        }
+        .nav-buttons {
+            display: flex;
+            gap: 12px;
+        }
+        .nav-btn {
+            padding: 10px 24px;
+            border-radius: 24px;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .nav-btn.active {
+            background: rgba(255,255,255,0.25);
+            color: white;
+        }
+        .nav-btn.inactive {
+            background: rgba(255,255,255,0.1);
+            color: rgba(255,255,255,0.8);
+        }
+        .nav-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+        
+        /* 教师模式提示条 */
+        .teacher-banner {
+            background: #fff5f5;
+            color: #c62828;
+            padding: 14px 24px;
+            text-align: center;
+            font-weight: 500;
+            font-size: 1.05rem;
+            border-bottom: 1px solid #fecaca;
+        }
+        
+        /* 主体区域 */
+        .main-content {
+            padding: 32px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        /* 待审核区域 */
+        .pending-section {
+            background: white;
+            border-radius: 20px;
+            padding: 28px;
+            margin-bottom: 28px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        }
+        .section-title {
+            font-size: 1.35rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .pending-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 20px;
+        }
+        .pending-card {
+            background: #fff5f5;
+            border: 2px solid #fecaca;
+            border-radius: 16px;
+            padding: 20px;
+        }
+        .pending-card h4 {
+            color: #991b1b;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+        .pending-card .meta {
+            font-size: 0.95rem;
+            color: #b91c1c;
+            margin-bottom: 14px;
+        }
+        .pending-card .actions {
+            display: flex;
+            gap: 10px;
+        }
+        .pending-card button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .approve-btn {
+            background: #22c55e;
+            color: white;
+        }
+        .approve-btn:hover {
+            background: #16a34a;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+        }
+        .reject-btn {
+            background: #ef4444;
+            color: white;
+        }
+        .reject-btn:hover {
+            background: #dc2626;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+        }
+        .empty-pending {
+            text-align: center;
+            color: #991b1b;
+            padding: 40px;
+            font-size: 1.1rem;
+        }
+        
+        /* 已发布新闻列表 */
+        .published-section {
+            background: white;
+            border-radius: 20px;
+            padding: 28px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        }
+        .news-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .news-table th,
+        .news-table td {
+            padding: 16px;
+            text-align: left;
+            border-bottom: 1px solid #f3f4f6;
+        }
+        .news-table th {
+            background: #fff5f5;
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 1rem;
+        }
+        .news-table tr:hover {
+            background: #fff5f5;
+        }
+        .news-title {
+            font-weight: 500;
+            color: #1f2937;
+            max-width: 350px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            font-size: 1.05rem;
+        }
+        .badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        .badge-pinned {
+            background: #fef3c7;
+            color: #d97706;
+        }
+        .badge-recommended {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+        .action-btns {
+            display: flex;
+            gap: 10px;
+        }
+        .action-btns button {
+            padding: 8px 16px;
+            border: 1px solid #e5e7eb;
+            background: white;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .action-btns button:hover {
+            background: #f3f4f6;
+            transform: translateY(-2px);
+        }
+        .action-btns .delete-btn {
+            color: #dc2626;
+            border-color: #fecaca;
+        }
+        .action-btns .delete-btn:hover {
+            background: #fef2f2;
+        }
+        .toggle-btn {
+            padding: 8px 16px;
+            border: 1px solid #e5e7eb;
+            background: white;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .toggle-btn.active {
+            background: #fff5f5;
+            border-color: #c62828;
+            color: #c62828;
+        }
+        
+        /* 密码验证界面 */
+        .login-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, #c62828 0%, #b71c1c 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+        .login-box {
+            background: white;
+            border-radius: 24px;
+            padding: 48px;
+            width: 90%;
+            max-width: 420px;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        .login-box h2 {
+            color: #c62828;
+            margin-bottom: 10px;
+            font-size: 1.7rem;
+        }
+        .login-box p {
+            color: #6b7280;
+            margin-bottom: 28px;
+            font-size: 1rem;
+        }
+        .login-box input {
+            width: 100%;
+            padding: 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 14px;
+            font-size: 1.05rem;
+            margin-bottom: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        .login-box input:focus {
+            outline: none;
+            border-color: #c62828;
+            box-shadow: 0 0 0 4px rgba(198, 40, 40, 0.1);
+        }
+        .login-box button {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #c62828 0%, #b71c1c 100%);
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .login-box button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(198, 40, 40, 0.4);
+        }
+        .login-error {
+            color: #dc2626;
+            font-size: 0.9rem;
+            margin-top: 14px;
+            display: none;
+        }
+        
+        /* 响应式 */
+        @media (max-width: 800px) {
+            .top-bar {
+                flex-direction: column;
+                gap: 12px;
+                text-align: center;
+            }
+            .pending-list {
+                grid-template-columns: 1fr;
+            }
+            .news-table {
+                font-size: 0.85rem;
+            }
+            .news-table th,
+            .news-table td {
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 密码验证界面 -->
+    <div class="login-overlay" id="loginOverlay">
+        <div class="login-box">
+            <h2>🔐 教师登录</h2>
+            <p>请输入教师密码进入审核后台</p>
+            <input type="password" id="passwordInput" placeholder="请输入密码">
+            <button onclick="handleLogin()">登录</button>
+            <p class="login-error" id="loginError">密码错误，请重试</p>
+        </div>
+    </div>
+    
+    <!-- 教师模式内容 -->
+    <div id="teacherContent" style="display:none;">
+        <!-- 顶部区域 -->
+        <div class="top-bar">
+            <div class="logo">
+                <span class="logo-icon">🇨🇳</span>
+                班级时政汇 · 教师后台
+            </div>
+            <div class="nav-buttons">
+                <button class="nav-btn inactive" onclick="goToStudent()">班级共建</button>
+                <button class="nav-btn active">教师入口</button>
+            </div>
+        </div>
+        
+        <!-- 教师模式提示条 -->
+        <div class="teacher-banner">
+            👨‍🏫 教师模式：可审核/删除/置顶新闻 ⭐
+        </div>
+        
+        <!-- 主体内容 -->
+        <div class="main-content">
+            <!-- 待审核区域 -->
+            <div class="pending-section">
+                <div class="section-title">📋 待审核新闻 (<span id="pendingCount">0</span>)</div>
+                <div class="pending-list" id="pendingList">
+                    <div class="empty-pending">暂无待审核的新闻</div>
+                </div>
+            </div>
+            
+            <!-- 已发布新闻管理 -->
+            <div class="published-section">
+                <div class="section-title">📰 已发布新闻管理 (<span id="publishedCount">0</span>)</div>
+                <table class="news-table">
+                    <thead>
+                        <tr>
+                            <th>新闻标题</th>
+                            <th>上传者</th>
+                            <th>分类</th>
+                            <th>状态</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="publishedTable">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
+    import { getFirestore, doc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBKB9h-jmxkJ_paq82rdeXdHOVAS2lGZtA",
+      authDomain: "ai-shizheng-tongbu.firebaseapp.com",
+      projectId: "ai-shizheng-tongbu",
+      storageBucket: "ai-shizheng-tongbu.firebasestorage.app",
+      messagingSenderId: "168414204881",
+      appId: "1:168414204881:web:2a8876bc06b31e7c2f06f0"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const TEACHER_PASSWORD = '20011012qq';
+    
+    let publishedNews = [];
+    let pendingNews = [];
+    
+    function handleLogin() {
+        const password = document.getElementById('passwordInput').value;
+        if (password === TEACHER_PASSWORD) {
+            document.getElementById('loginOverlay').style.display = 'none';
+            document.getElementById('teacherContent').style.display = 'block';
+            loadData();
+            render();
+        } else {
+            document.getElementById('loginError').style.display = 'block';
+        }
+    }
+    
+    function loadData() {
+        // 监听已发布新闻变化
+        onSnapshot(doc(db, 'data', 'published'), (docSnap) => {
+            if (docSnap.exists() && docSnap.data().news) {
+                publishedNews = docSnap.data().news;
+                renderPublished();
+            }
+        });
+        
+        // 监听待审核新闻变化
+        onSnapshot(doc(db, 'data', 'pending'), (docSnap) => {
+            if (docSnap.exists() && docSnap.data().news) {
+                pendingNews = docSnap.data().news;
+                renderPending();
+            }
+        });
+    }
+    
+    function saveData() {
+        setDoc(doc(db, 'data', 'published'), {
+            news: publishedNews,
+            lastUpdate: new Date().toISOString()
+        });
+        setDoc(doc(db, 'data', 'pending'), {
+            news: pendingNews,
+            lastUpdate: new Date().toISOString()
+        });
+    }
+    
+    function render() {
+        renderPending();
+        renderPublished();
+    }
+    
+    function renderPending() {
+        document.getElementById('pendingCount').textContent = pendingNews.length;
+        const container = document.getElementById('pendingList');
+        
+        if (pendingNews.length === 0) {
+            container.innerHTML = '<div class="empty-pending">暂无待审核的新闻 🎉</div>';
+            return;
+        }
+        
+        container.innerHTML = pendingNews.map((news, idx) => `
+            <div class="pending-card">
+                <h4>${news.title}</h4>
+                <div class="meta">👤 ${news.uploader} · ${news.category} · ${news.date}</div>
+                <div style="margin-bottom:10px;"><a href="${news.content}" target="_blank" style="color:#c62828;font-size:0.95rem;font-weight:500;">🔗 查看原文链接</a></div>
+                <div style="font-size:0.95rem; color:#a16207; margin-bottom:12px;">推荐理由：${news.reason}</div>
+                <div class="actions">
+                    <button class="approve-btn" onclick="approveNews(${idx})">✅ 通过</button>
+                    <button class="reject-btn" onclick="rejectNews(${idx})">❌ 驳回</button>
+                </div>
+            </div>
+        `).join('');
+    }
+    
+    function renderPublished() {
+        document.getElementById('publishedCount').textContent = publishedNews.length;
+        const tbody = document.getElementById('publishedTable');
+        
+        if (publishedNews.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#9ca3af;">暂无已发布的新闻</td></tr>';
+            return;
+        }
+        
+        tbody.innerHTML = publishedNews.map(news => {
+            const badges = [];
+            if (news.isPinned) badges.push('<span class="badge badge-pinned">📌 置顶</span>');
+            if (news.isRecommended) badges.push('<span class="badge badge-recommended">⭐ 教师推荐</span>');
+            
+            return `
+                <tr>
+                    <td class="news-title" title="${news.title}"><a href="${news.content}" target="_blank" style="color:#c62828;text-decoration:none;">${news.title}</a></td>
+                    <td>${news.uploader}</td>
+                    <td>${news.category}</td>
+                    <td>${badges.join(' ')}</td>
+                    <td>
+                        <div class="action-btns">
+                            <button class="toggle-btn ${news.isPinned ? 'active' : ''}" onclick="togglePin('${news.id}')">
+                                ${news.isPinned ? '📌 取消置顶' : '📌 置顶'}
+                            </button>
+                            <button class="toggle-btn ${news.isRecommended ? 'active' : ''}" onclick="toggleRecommend('${news.id}')">
+                                ${news.isRecommended ? '⭐ 取消推荐' : '⭐ 推荐'}
+                            </button>
+                            <button class="delete-btn" onclick="deleteNews('${news.id}')">🗑️ 删除</button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    }
+    
+    function approveNews(idx) {
+        const news = pendingNews[idx];
+        if (!news) return;
+        
+        publishedNews.unshift({
+            id: Date.now(),
+            title: news.title,
+            content: news.content,
+            reason: news.reason,
+            category: news.category,
+            textbook: news.textbook,
+            uploader: news.uploader,
+            isAnonymous: news.isAnonymous,
+            isPinned: false,
+            isRecommended: false,
+            date: news.date,
+            comments: []
+        });
+        
+        pendingNews.splice(idx, 1);
+        saveData();
+        render();
+    }
+    
+    function rejectNews(idx) {
+        if (!confirm('确定驳回这篇新闻吗？')) return;
+        pendingNews.splice(idx, 1);
+        saveData();
+        render();
+    }
+    
+    function togglePin(id) {
+        const news = publishedNews.find(n => n.id == id);
+        if (news) {
+            news.isPinned = !news.isPinned;
+            saveData();
+            render();
+        }
+    }
+    
+    function toggleRecommend(id) {
+        const news = publishedNews.find(n => n.id == id);
+        if (news) {
+            news.isRecommended = !news.isRecommended;
+            saveData();
+            render();
+        }
+    }
+    
+    function deleteNews(id) {
+        if (!confirm('确定要删除这篇新闻吗？此操作不可恢复。')) return;
+        publishedNews = publishedNews.filter(n => n.id != id);
+        saveData();
+        render();
+    }
+    
+    function goToStudent() {
+        window.location.href = 'AI时政思享台 - 班级共建版.html';
+    }
+    
+    document.getElementById('passwordInput').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') handleLogin();
+    });
+</script>
+</body>
+</html>

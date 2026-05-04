@@ -1,0 +1,1750 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>班级时政汇 - 高中思政时政热点分享平台</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { font-size: 17px; }
+        body {
+            background: linear-gradient(135deg, #fff0f0 0%, #fff5e8 50%, #fff9f0 100%);
+            font-family: 'Noto Sans SC', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            min-height: 100vh;
+            color: #2d3748;
+        }
+        
+        /* 顶部区域 */
+        .top-bar {
+            background: linear-gradient(135deg, #c62828 0%, #b71c1c 100%);
+            color: white;
+            padding: 22px 36px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 20px rgba(198, 40, 40, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        .top-bar::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 60%);
+            pointer-events: none;
+        }
+        .top-bar::after {
+            content: '🚩';
+            position: absolute;
+            right: 80px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 3rem;
+            opacity: 0.15;
+        }
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background: rgba(255,255,255,0.25);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+        }
+        .nav-buttons {
+            display: flex;
+            gap: 14px;
+        }
+        .nav-btn {
+            padding: 12px 28px;
+            border-radius: 28px;
+            border: 2px solid rgba(255,255,255,0.3);
+            cursor: pointer;
+            font-size: 1.05rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        .nav-btn.active {
+            background: rgba(255,255,255,0.25);
+            color: white;
+            border-color: rgba(255,255,255,0.5);
+        }
+        .nav-btn.inactive {
+            background: transparent;
+            color: rgba(255,255,255,0.85);
+        }
+        .nav-btn.inactive:hover {
+            background: rgba(255,255,255,0.15);
+            border-color: rgba(255,255,255,0.5);
+        }
+        
+        /* 第二行：分类 + 搜索 */
+        .toolbar {
+            background: white;
+            padding: 22px 36px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+            flex-wrap: wrap;
+            gap: 18px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .category-buttons {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .category-btn {
+            padding: 14px 28px;
+            border-radius: 30px;
+            border: 2px solid #e2e8f0;
+            background: white;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .category-btn:hover {
+            border-color: #c62828;
+            transform: translateY(-2px);
+        }
+        .category-btn.active {
+            background: linear-gradient(135deg, #c62828 0%, #b71c1c 100%);
+            color: white;
+            border-color: transparent;
+            box-shadow: 0 4px 15px rgba(198, 40, 40, 0.4);
+        }
+        .search-box {
+            display: flex;
+            gap: 14px;
+            align-items: center;
+        }
+        .search-box input {
+            padding: 16px 26px;
+            border: 2px solid #e2e8f0;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            width: 320px;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+        .search-box input:focus {
+            border-color: #c62828;
+            box-shadow: 0 0 0 4px rgba(198, 40, 40, 0.1);
+        }
+        .search-box button {
+            padding: 16px 26px;
+            border: none;
+            background: linear-gradient(135deg, #c62828 0%, #b71c1c 100%);
+            color: white;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.15rem;
+        }
+        .search-box button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(198, 40, 40, 0.4);
+        }
+        
+        /* 主体内容区 */
+        .main-content {
+            display: flex;
+            min-height: calc(100vh - 200px);
+            transition: all 0.3s ease;
+        }
+        
+        /* 左侧卡片区域 */
+        .left-panel {
+            flex: 1;
+            padding: 36px;
+            overflow-y: auto;
+            transition: all 0.3s ease;
+        }
+        
+        .source-tips {
+            background: linear-gradient(135deg, #fff5f5 0%, #fff9f0 100%);
+            border: 1px solid #fecaca;
+            border-radius: 16px;
+            padding: 16px 20px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .source-tips .tips-icon {
+            font-size: 1.5rem;
+        }
+        .source-tips .tips-text {
+            font-size: 1rem;
+            color: #2d3748;
+        }
+        .source-tips .tips-text a {
+            color: #c62828;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+        .source-tips .tips-text a:hover {
+            color: #b71c1c;
+            text-decoration: underline;
+        }
+        
+        .upload-btn {
+            background: linear-gradient(135deg, #e53935 0%, #c62828 50%, #b71c1c 100%);
+            background-size: 200% 200%;
+            color: white;
+            border: none;
+            padding: 24px 48px;
+            border-radius: 60px;
+            font-size: 1.4rem;
+            font-weight: 700;
+            cursor: pointer;
+            margin-bottom: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            box-shadow: 0 8px 30px rgba(198, 40, 40, 0.5);
+            transition: all 0.3s ease;
+            animation: pulse-glow 2s ease-in-out infinite, bounce 2s ease-in-out infinite;
+            position: relative;
+            overflow: hidden;
+        }
+        .upload-btn::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.15), transparent);
+            animation: shine 3s ease-in-out infinite;
+        }
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 8px 30px rgba(198, 40, 40, 0.5); }
+            50% { box-shadow: 0 8px 45px rgba(198, 40, 40, 0.7), 0 0 60px rgba(198, 40, 40, 0.3); }
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        @keyframes shine {
+            0% { transform: translateX(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) rotate(45deg); }
+        }
+        .upload-btn:hover {
+            transform: translateY(-6px) scale(1.05);
+            box-shadow: 0 15px 50px rgba(198, 40, 40, 0.6);
+            animation: pulse-glow 1s ease-in-out infinite, none;
+        }
+        .upload-btn .icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+        }
+        
+        /* 卡片列表 */
+        .cards-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 28px;
+        }
+        .news-card {
+            background: white;
+            border-radius: 24px;
+            padding: 0;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid #f0f0f0;
+        }
+        .news-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 16px 45px rgba(0,0,0,0.12);
+            border-color: #c62828;
+        }
+        .news-card.selected {
+            border: 2px solid #c62828;
+            box-shadow: 0 10px 30px rgba(198, 40, 40, 0.25);
+        }
+        .news-card.pinned {
+            border-left: 6px solid #c62828;
+        }
+        .card-header {
+            padding: 24px 24px 16px;
+            position: relative;
+        }
+        .card-badges {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+        .pinned-badge {
+            background: linear-gradient(135deg, #f59e0b 0%, #f97316 100%);
+            color: white;
+            padding: 5px 14px;
+            border-radius: 14px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .teacher-recommend {
+            background: linear-gradient(135deg, #c62828 0%, #b71c1c 100%);
+            color: white;
+            padding: 5px 14px;
+            border-radius: 14px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .card-category {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 7px 16px;
+            border-radius: 22px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: white;
+        }
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #1a202c;
+            line-height: 1.5;
+            margin-bottom: 14px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .card-footer {
+            padding: 16px 24px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid #f5f5f5;
+        }
+        .card-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        .card-uploader {
+            font-size: 1rem;
+            color: #4a5568;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+        .card-time {
+            font-size: 0.9rem;
+            color: #a0aec0;
+        }
+        .card-arrow {
+            width: 42px;
+            height: 42px;
+            background: #f7fafc;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #c62828;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+        .news-card:hover .card-arrow {
+            background: linear-gradient(135deg, #c62828 0%, #b71c1c 100%);
+            color: white;
+            transform: translateX(4px);
+        }
+        
+        /* 分类颜色 */
+        .cat-economy { background: linear-gradient(135deg, #d32f2f 0%, #c62828 100%); }
+        .cat-politics { background: linear-gradient(135deg, #b71c1c 0%, #8c1515 100%); }
+        .cat-culture { background: linear-gradient(135deg, #e53935 0%, #d32f2f 100%); }
+        .cat-ecology { background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%); }
+        .cat-society { background: linear-gradient(135deg, #ef5350 0%, #e53935 100%); }
+        
+        /* 空白状态 */
+        .empty-state {
+            background: white;
+            border-radius: 28px;
+            padding: 70px 50px;
+            text-align: center;
+            grid-column: 1 / -1;
+            box-shadow: 0 6px 25px rgba(0,0,0,0.06);
+            border: 2px dashed #e2e8f0;
+        }
+        .empty-state .icon {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #667eea20 0%, #764ba220 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            margin: 0 auto 24px;
+        }
+        .empty-state h3 {
+            color: #2d3748;
+            margin-bottom: 12px;
+            font-size: 1.5rem;
+        }
+        .empty-state p {
+            color: #718096;
+            margin-bottom: 28px;
+            font-size: 1.1rem;
+        }
+        .empty-state button {
+            background: linear-gradient(135deg, #c62828 0%, #b71c1c 100%);
+            color: white;
+            border: none;
+            padding: 16px 36px;
+            border-radius: 28px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .empty-state button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(198, 40, 40, 0.4);
+        }
+        
+        /* 加载更多 */
+        .load-more {
+            text-align: center;
+            padding: 36px;
+        }
+        .load-more button {
+            background: white;
+            border: 2px solid #c62828;
+            padding: 14px 36px;
+            border-radius: 28px;
+            cursor: pointer;
+            color: #c62828;
+            font-size: 1.05rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .load-more button:hover {
+            background: linear-gradient(135deg, #c62828 0%, #b71c1c 100%);
+            color: white;
+        }
+        
+        /* 右侧详情面板 */
+        .right-panel {
+            width: 0;
+            background: white;
+            overflow: hidden;
+            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            box-shadow: -6px 0 35px rgba(0,0,0,0.08);
+        }
+        .right-panel.open {
+            width: 50%;
+        }
+        .right-header {
+            padding: 28px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(135deg, #c6282808 0%, #b71c1c08 100%);
+        }
+        .right-header-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #2d3748;
+        }
+        .close-btn {
+            background: #f7fafc;
+            border: none;
+            font-size: 1.3rem;
+            cursor: pointer;
+            color: #c62828;
+            padding: 12px 16px;
+            border-radius: 14px;
+            transition: all 0.3s ease;
+        }
+        .close-btn:hover {
+            background: linear-gradient(135deg, #c62828 0%, #b71c1c 100%);
+            color: white;
+        }
+        
+        .detail-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 32px;
+        }
+        .detail-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #1a202c;
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+        .detail-meta {
+            display: flex;
+            gap: 24px;
+            color: #718096;
+            font-size: 1.05rem;
+            margin-bottom: 28px;
+            padding: 18px;
+            background: #fff5f5;
+            border-radius: 14px;
+        }
+        .detail-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .detail-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 28px;
+            background: linear-gradient(135deg, #c6282810 0%, #b71c1c10 100%);
+            color: #c62828;
+            border-radius: 14px;
+            text-decoration: none;
+            margin-bottom: 28px;
+            font-weight: 500;
+            font-size: 1.05rem;
+            transition: all 0.3s ease;
+            border: 1px solid #c6282830;
+        }
+        .detail-link:hover {
+            background: linear-gradient(135deg, #c62828 0%, #b71c1c 100%);
+            color: white;
+        }
+        .detail-section {
+            margin-bottom: 32px;
+            padding: 24px;
+            background: #fff5f5;
+            border-radius: 18px;
+        }
+        .detail-section h4 {
+            color: #2d3748;
+            margin-bottom: 14px;
+            font-size: 1.15rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .detail-section p {
+            color: #4a5568;
+            line-height: 1.9;
+            font-size: 1.05rem;
+        }
+        
+        /* 留言区 */
+        .comments-section {
+            border-top: 2px solid #f0f0f0;
+            padding-top: 28px;
+        }
+        .comments-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+        .comments-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #2d3748;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .comments-count {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 5px 14px;
+            border-radius: 22px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        .comments-list {
+            margin-bottom: 24px;
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 12px;
+        }
+        .comments-list::-webkit-scrollbar {
+            width: 8px;
+        }
+        .comments-list::-webkit-scrollbar-thumb {
+            background: #667eea40;
+            border-radius: 4px;
+        }
+        .comment-item {
+            background: white;
+            padding: 18px;
+            border-radius: 18px;
+            margin-bottom: 16px;
+            border: 1px solid #f0f0f0;
+            transition: all 0.3s ease;
+        }
+        .comment-item:hover {
+            border-color: #667eea30;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+        }
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .comment-author {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .comment-avatar {
+            width: 38px;
+            height: 38px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        .comment-author-name {
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 1.05rem;
+        }
+        .teacher-badge {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        .comment-time {
+            font-size: 0.9rem;
+            color: #a0aec0;
+        }
+        .comment-content {
+            color: #4a5568;
+            font-size: 1.05rem;
+            line-height: 1.8;
+            padding-left: 50px;
+        }
+        .comment-actions {
+            margin-top: 14px;
+            padding-left: 50px;
+            display: flex;
+            gap: 18px;
+        }
+        .like-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #a0aec0;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            transition: all 0.3s ease;
+        }
+        .like-btn:hover {
+            color: #ef4444;
+        }
+        .comment-input-area {
+            display: flex;
+            gap: 14px;
+            align-items: flex-end;
+        }
+        .comment-input-area textarea {
+            flex: 1;
+            padding: 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 18px;
+            font-size: 1.05rem;
+            resize: none;
+            height: 80px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+        .comment-input-area textarea:focus {
+            border-color: #c62828;
+            box-shadow: 0 0 0 4px rgba(198, 40, 40, 0.1);
+        }
+        .comment-input-area button {
+            padding: 16px 32px;
+            background: linear-gradient(135deg, #c62828 0%, #b71c1c 100%);
+            color: white;
+            border: none;
+            border-radius: 18px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1.05rem;
+            transition: all 0.3s ease;
+        }
+        .comment-input-area button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(198, 40, 40, 0.4);
+        }
+        
+        /* 模态框 */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(6px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-overlay.open {
+            display: flex;
+        }
+        .modal {
+            background: white;
+            border-radius: 28px;
+            padding: 36px;
+            width: 90%;
+            max-width: 560px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 70px rgba(0,0,0,0.22);
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+        .modal-header h2 {
+            color: #2d3748;
+            font-size: 1.6rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .modal-close {
+            background: #f7fafc;
+            border: none;
+            font-size: 1.3rem;
+            cursor: pointer;
+            color: #667eea;
+            padding: 12px 16px;
+            border-radius: 14px;
+            transition: all 0.3s ease;
+        }
+        .modal-close:hover {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .modal-body .form-group {
+            margin-bottom: 22px;
+        }
+        .modal-body label {
+            display: block;
+            margin-bottom: 10px;
+            color: #4a5568;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+        .modal-body input, .modal-body textarea, .modal-body select {
+            width: 100%;
+            padding: 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 14px;
+            font-size: 1.05rem;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+        .modal-body input:focus, .modal-body textarea:focus, .modal-body select:focus {
+            border-color: #c62828;
+            box-shadow: 0 0 0 4px rgba(198, 40, 40, 0.1);
+        }
+        .modal-body textarea {
+            resize: none;
+            height: 110px;
+        }
+        .modal-body .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            background: #f7fafc;
+            border-radius: 14px;
+        }
+        .modal-body .checkbox-group input[type="checkbox"] {
+            width: 22px;
+            height: 22px;
+            accent-color: #c62828;
+        }
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 16px;
+            margin-top: 32px;
+        }
+        .modal-footer button {
+            padding: 16px 32px;
+            border-radius: 14px;
+            border: none;
+            cursor: pointer;
+            font-size: 1.05rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .btn-cancel {
+            background: #f7fafc;
+            color: #c62828;
+        }
+        .btn-cancel:hover {
+            background: #e2e8f0;
+        }
+        .btn-submit {
+            background: linear-gradient(135deg, #c62828 0%, #b71c1c 100%);
+            color: white;
+        }
+        .btn-submit:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(198, 40, 40, 0.4);
+        }
+        
+        /* 悬浮数字人 - 可爱设计 */
+        .float-ai {
+            position: fixed;
+            bottom: 32px;
+            right: 32px;
+            z-index: 1000;
+        }
+        .ai-button {
+            background: linear-gradient(135deg, #e53935 0%, #c62828 50%, #b71c1c 100%);
+            background-size: 200% 200%;
+            width: 110px;
+            height: 110px;
+            border-radius: 110px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 52px;
+            cursor: pointer;
+            box-shadow: 0 10px 50px rgba(198, 40, 40, 0.6), 0 0 30px rgba(198, 40, 40, 0.3);
+            transition: all 0.3s ease;
+            border: 5px solid white;
+            animation: ai-bounce 2s ease-in-out infinite, ai-glow 1.5s ease-in-out infinite;
+            position: relative;
+        }
+        .ai-button::before {
+            content: '';
+            position: absolute;
+            width: 120%;
+            height: 120%;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #c62828 0%, #b71c1c 100%);
+            z-index: -1;
+            animation: ai-pulse 2s ease-in-out infinite;
+        }
+        .ai-button::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            border-radius: 50%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.2), transparent);
+            animation: ai-shine 3s ease-in-out infinite;
+        }
+        @keyframes ai-bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-12px); }
+        }
+        @keyframes ai-glow {
+            0%, 100% { box-shadow: 0 10px 50px rgba(198, 40, 40, 0.6), 0 0 30px rgba(198, 40, 40, 0.3); }
+            50% { box-shadow: 0 10px 60px rgba(198, 40, 40, 0.8), 0 0 50px rgba(198, 40, 40, 0.5); }
+        }
+        @keyframes ai-pulse {
+            0%, 100% { opacity: 0.4; transform: scale(1); }
+            50% { opacity: 0.2; transform: scale(1.4); }
+        }
+        @keyframes ai-shine {
+            0% { transform: translateX(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) rotate(45deg); }
+        }
+        .ai-button:hover {
+            transform: scale(1.2);
+            box-shadow: 0 15px 70px rgba(198, 40, 40, 0.7), 0 0 60px rgba(198, 40, 40, 0.5);
+            animation: none;
+        }
+        .chat-window {
+            position: fixed;
+            bottom: 160px;
+            right: 25px;
+            width: 420px;
+            max-width: calc(100vw - 64px);
+            background: white;
+            border-radius: 28px;
+            box-shadow: 0 25px 70px rgba(0,0,0,0.22);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            border: 1px solid #f0f0f0;
+        }
+        .chat-header {
+            background: linear-gradient(135deg, #c62828 0%, #b71c1c 100%);
+            color: white;
+            padding: 22px;
+            font-weight: 600;
+            font-size: 1.15rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .chat-messages {
+            height: 400px;
+            overflow-y: auto;
+            padding: 22px;
+            background: linear-gradient(135deg, #fff5f5 0%, #fff9f0 100%);
+            font-size: 1.05rem;
+        }
+        .chat-messages div { margin-bottom: 16px; }
+        .chat-input-area {
+            display: flex;
+            padding: 18px;
+            border-top: 1px solid #f0f0f0;
+            background: white;
+            gap: 12px;
+        }
+        .chat-input-area input {
+            flex: 1;
+            margin: 0;
+            border-radius: 28px;
+            padding: 14px 22px;
+            border: 2px solid #e2e8f0;
+            font-size: 1.05rem;
+            outline: none;
+        }
+        .chat-input-area input:focus {
+            border-color: #c62828;
+        }
+        .chat-input-area button {
+            margin-left: 0;
+            padding: 14px 26px;
+            background: linear-gradient(135deg, #c62828 0%, #b71c1c 100%);
+            color: white;
+            border: none;
+            border-radius: 28px;
+            font-weight: 500;
+            font-size: 1.05rem;
+        }
+        
+        /* 响应式 */
+        @media (max-width: 900px) {
+            html { font-size: 15px; }
+            .right-panel.open {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                height: 80vh;
+                width: 100% !important;
+                border-radius: 28px 28px 0 0;
+                box-shadow: 0 -12px 50px rgba(0,0,0,0.18);
+            }
+        }
+        @media (max-width: 800px) {
+            html { font-size: 14px; }
+            .top-bar {
+                flex-direction: column;
+                gap: 18px;
+                text-align: center;
+                padding: 20px 24px;
+            }
+            .logo {
+                font-size: 1.5rem;
+            }
+            .toolbar {
+                flex-direction: column;
+                align-items: stretch;
+                padding: 18px 24px;
+                gap: 16px;
+            }
+            .category-buttons {
+                justify-content: center;
+            }
+            .search-box {
+                flex-direction: column;
+            }
+            .search-box input {
+                width: 100%;
+            }
+            .cards-container {
+                grid-template-columns: 1fr;
+            }
+            .left-panel {
+                padding: 24px;
+            }
+            .detail-content {
+                padding: 24px;
+            }
+            .float-ai {
+                bottom: 24px;
+                right: 24px;
+            }
+            .ai-button {
+                width: 70px;
+                height: 70px;
+                font-size: 32px;
+            }
+            .chat-window {
+                bottom: 110px;
+                right: 16px;
+                left: 16px;
+                width: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部区域 -->
+    <div class="top-bar">
+        <div class="logo">
+            <div class="logo-icon">🇨🇳</div>
+            班级时政汇
+        </div>
+        <div class="nav-buttons">
+            <button class="nav-btn active">班级共建</button>
+            <button class="nav-btn inactive" id="teacherBtn">教师入口</button>
+        </div>
+    </div>
+    
+    <!-- 第二行：分类 + 搜索 -->
+    <div class="toolbar">
+        <div class="category-buttons">
+            <button class="category-btn active" data-category="政治">⚖️ 政治</button>
+            <button class="category-btn" data-category="经济">💰 经济</button>
+            <button class="category-btn" data-category="文化">🎭 文化</button>
+            <button class="category-btn" data-category="生态">🌿 生态</button>
+            <button class="category-btn" data-category="社会">👥 社会</button>
+        </div>
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="搜索新闻标题、上传者...">
+            <button id="searchBtn">🔍</button>
+        </div>
+    </div>
+    
+    <!-- 主体内容区 -->
+    <div class="main-content">
+        <!-- 左侧卡片区域 -->
+        <div class="left-panel" id="leftPanel">
+            <div class="source-tips">
+                <span class="tips-icon">💡</span>
+                <span class="tips-text">推荐热点来源：
+                    <a href="https://www.xuexi.cn/" target="_blank">学习强国</a>、
+                    <a href="https://www.cctv.com/" target="_blank">央视网</a>、
+                    <a href="http://www.news.cn/" target="_blank">新华网</a>、
+                    <a href="http://www.people.com.cn/" target="_blank">人民网</a>、
+                    <a href="https://www.gmw.cn/" target="_blank">光明网</a>
+                </span>
+            </div>
+            <button class="upload-btn" id="uploadBtn">
+                <span class="icon">+</span>
+                分享时政热点
+            </button>
+            
+            <div class="cards-container" id="cardsContainer">
+                <!-- 动态生成卡片 -->
+            </div>
+            
+            <div class="load-more" id="loadMore">
+                <button>加载更多</button>
+            </div>
+        </div>
+        
+        <!-- 右侧详情面板 -->
+        <div class="right-panel" id="rightPanel">
+            <div class="right-header">
+                <span class="right-header-title">📖 新闻详情</span>
+                <button class="close-btn" id="closeDetailBtn">✕</button>
+            </div>
+            <div class="detail-content" id="detailContent">
+                <div style="text-align:center; color:#a0aec0; padding:80px 20px;">
+                    <div style="font-size:3rem;margin-bottom:16px;">📰</div>
+                    <p style="font-size:1.1rem;">点击左侧卡片查看详情</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 悬浮数字人 -->
+    <div class="float-ai">
+        <div class="ai-button" id="openChatBtn">🤖</div>
+        <div class="chat-window" id="chatWindow">
+            <div class="chat-header">
+                <span>🤖 思政助教 · 小思</span>
+                <span style="cursor:pointer;" id="closeChatBtn">✖</span>
+            </div>
+            <div class="chat-messages" id="chatMessages">
+                <div>👋 你好！我是小思，你的思政助教。我会尽力引导你思考~</div>
+            </div>
+            <div class="chat-input-area">
+                <input type="text" id="chatInput" placeholder="输入你的问题...">
+                <button id="sendChatBtn">发送</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 上传新闻模态框 -->
+    <div class="modal-overlay" id="uploadModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>📤 分享时政热点</h2>
+                <button class="modal-close" id="closeUploadModal">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>分享者 *</label>
+                    <input type="text" id="modalUploader" placeholder="请输入您的姓名" required>
+                </div>
+                <div class="form-group">
+                    <label>新闻标题 *</label>
+                    <input type="text" id="modalTitle" placeholder="请输入新闻标题">
+                </div>
+                <div class="form-group">
+                    <label>新闻分类 *</label>
+                    <select id="modalCategory">
+                        <option value="">请选择分类</option>
+                        <option value="经济">💰 经济</option>
+                        <option value="政治">⚖️ 政治</option>
+                        <option value="文化">🎭 文化</option>
+                        <option value="生态">🌿 生态</option>
+                        <option value="社会">👥 社会</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>原文链接 *</label>
+                    <input type="url" id="modalLink" placeholder="请输入新闻链接">
+                </div>
+                <div class="form-group">
+                    <label>推荐理由 *</label>
+                    <textarea id="modalReason" placeholder="请输入推荐理由（200字以内）"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>链接教材知识</label>
+                    <input type="text" id="modalTextbook" placeholder="如：必修2《经济与社会》—新发展理念">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" id="cancelUpload">取消</button>
+                <button class="btn-submit" id="submitNews">提交</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 教师登录弹窗 -->
+    <script type="module">
+    // ======================== Firebase 配置 ========================
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
+    import { getFirestore, collection, doc, getDocs, setDoc, onSnapshot, deleteField } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBKB9h-jmxkJ_paq82rdeXdHOVAS2lGZtA",
+      authDomain: "ai-shizheng-tongbu.firebaseapp.com",
+      projectId: "ai-shizheng-tongbu",
+      storageBucket: "ai-shizheng-tongbu.firebasestorage.app",
+      messagingSenderId: "168414204881",
+      appId: "1:168414204881:web:2a8876bc06b31e7c2f06f0"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // ======================== API Key ========================
+    const DEEPSEEK_API_KEY = "sk-3109827d3cf246d0bc3e21554aed72db";
+    
+    // ======================== 全局状态 ========================
+    let publishedNews = [];
+    let pendingNews = [];
+    let currentClass = "高二(10)班";
+    let currentCategory = "政治";
+    let searchKeyword = "";
+    let selectedNewsId = null;
+    let displayCount = 6;
+    let unsubscribePublished = null;
+    let unsubscribePending = null;
+    
+    // 分类配置
+    const categoryConfig = {
+        '经济': { class: 'cat-economy', emoji: '💰' },
+        '政治': { class: 'cat-politics', emoji: '⚖️' },
+        '文化': { class: 'cat-culture', emoji: '🎭' },
+        '生态': { class: 'cat-ecology', emoji: '🌿' },
+        '社会': { class: 'cat-society', emoji: '👥' }
+    };
+    
+    // ======================== AI调用函数 ========================
+    function isAPIConfigured() {
+        return DEEPSEEK_API_KEY && DEEPSEEK_API_KEY.length > 20;
+    }
+    
+    async function callRealAI(userMessage, systemPrompt = null) {
+        if (!isAPIConfigured()) {
+            return "⚠️ AI功能未配置，请联系老师配置 DeepSeek API Key。";
+        }
+        
+        const defaultSystem = "你是一名高中思政教师，回答要简洁、有引导性，适合高中生理解。多结合《哲学与文化》《经济与社会》等教材知识。禁止直接给答案，要启发思考。";
+        
+        const requestBody = {
+            model: "deepseek-chat",
+            messages: [
+                { role: "system", content: systemPrompt || defaultSystem },
+                { role: "user", content: userMessage }
+            ],
+            max_tokens: 800,
+            temperature: 0.7
+        };
+        
+        const apiUrl = "https://api.deepseek.com/v1/chat/completions";
+        let lastError = "未知错误";
+        
+        // 尝试直接调用
+        try {
+            const response = await fetch(apiUrl, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${DEEPSEEK_API_KEY}`
+                },
+                body: JSON.stringify(requestBody)
+            });
+            
+            if (response.ok) {
+                const data = await response.json();
+                if (data.choices && data.choices[0] && data.choices[0].message) {
+                    return data.choices[0].message.content;
+                }
+            } else {
+                const errorData = await response.json().catch(() => ({}));
+                lastError = `HTTP ${response.status}: ${errorData.error?.message || 'Unknown'}`;
+            }
+        } catch(e) {
+            lastError = e.message;
+        }
+        
+        // 尝试代理
+        const proxies = [
+            `https://corsproxy.io/?${encodeURIComponent(apiUrl)}`,
+            `https://api.allorigins.win/raw?url=${encodeURIComponent(apiUrl)}`
+        ];
+        
+        for (const proxyUrl of proxies) {
+            try {
+                const response = await fetch(proxyUrl, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${DEEPSEEK_API_KEY}`
+                    },
+                    body: JSON.stringify(requestBody)
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.choices && data.choices[0] && data.choices[0].message) {
+                        return data.choices[0].message.content;
+                    }
+                }
+            } catch(e) {}
+        }
+        
+        return `⚠️ 调用 AI 失败: ${lastError}`;
+    }
+    
+    // ======================== 数据存储 (Firebase) ========================
+    async function saveData() {
+        try {
+            // 保存已发布新闻
+            await setDoc(doc(db, 'data', 'published'), {
+                news: publishedNews,
+                lastUpdate: new Date().toISOString()
+            });
+            // 保存待审核新闻
+            await setDoc(doc(db, 'data', 'pending'), {
+                news: pendingNews,
+                lastUpdate: new Date().toISOString()
+            });
+        } catch(e) {
+            console.error('保存失败:', e);
+        }
+    }
+    
+    function loadData() {
+        // 监听已发布新闻变化
+        unsubscribePublished = onSnapshot(doc(db, 'data', 'published'), (docSnap) => {
+            if (docSnap.exists() && docSnap.data().news) {
+                publishedNews = docSnap.data().news;
+                renderCards();
+            }
+        });
+        
+        // 监听待审核新闻变化
+        unsubscribePending = onSnapshot(doc(db, 'data', 'pending'), (docSnap) => {
+            if (docSnap.exists() && docSnap.data().news) {
+                pendingNews = docSnap.data().news;
+            }
+        });
+    }
+    
+    // ======================== 渲染函数 ========================
+    function filterNews() {
+        let filtered = publishedNews;
+        
+        // 按分类筛选
+        if (currentCategory) {
+            filtered = filtered.filter(n => n.category === currentCategory);
+        }
+        
+        // 按关键词搜索
+        if (searchKeyword.trim()) {
+            const kw = searchKeyword.toLowerCase();
+            filtered = filtered.filter(n => 
+                n.title.toLowerCase().includes(kw) ||
+                n.uploader.toLowerCase().includes(kw) ||
+                n.reason.toLowerCase().includes(kw)
+            );
+        }
+        
+        // 置顶优先
+        filtered.sort((a, b) => (b.isPinned ? 1 : 0) - (a.isPinned ? 1 : 0));
+        
+        return filtered;
+    }
+    
+    function renderCards() {
+        const container = document.getElementById('cardsContainer');
+        const filtered = filterNews();
+        const displayNews = filtered.slice(0, displayCount);
+        
+        if (filtered.length === 0) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <div class="icon">📭</div>
+                    <h3>暂无时政热点</h3>
+                    <p>暂无同学分享该类时政热点，成为第一个上传者吧！</p>
+                </div>
+            `;
+            document.getElementById('loadMore').style.display = 'none';
+            return;
+        }
+        
+        container.innerHTML = displayNews.map(news => {
+            const cat = categoryConfig[news.category] || { class: 'cat-economy', emoji: '📋' };
+            return `
+                <div class="news-card ${news.isPinned ? 'pinned' : ''} ${selectedNewsId === news.id ? 'selected' : ''}" data-id="${news.id}" onclick="selectNews(${news.id})">
+                    <div class="card-header">
+                        <div class="card-badges">
+                            ${news.isPinned ? '<span class="pinned-badge">📌 置顶</span>' : ''}
+                            ${news.isRecommended ? '<span class="teacher-recommend">⭐ 教师推荐</span>' : ''}
+                        </div>
+                        <div class="card-title">${news.title}</div>
+                        <span class="card-category ${cat.class}">${cat.emoji} ${news.category}</span>
+                    </div>
+                    <div class="card-footer">
+                        <div class="card-meta">
+                            <div class="card-uploader">👤 ${news.uploader}</div>
+                            <div class="card-time">📅 ${news.date}</div>
+                        </div>
+                        <div class="card-arrow">→</div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+        
+        // 加载更多按钮
+        document.getElementById('loadMore').style.display = displayNews.length >= filtered.length ? 'none' : 'block';
+    }
+    
+    function selectNews(newsId) {
+        selectedNewsId = newsId;
+        renderCards();
+        
+        // 展开右侧面板
+        const rightPanel = document.getElementById('rightPanel');
+        rightPanel.classList.add('open');
+        
+        // 渲染详情
+        const news = publishedNews.find(n => n.id === newsId);
+        if (news) {
+            renderDetail(news);
+        }
+    }
+    
+    function renderDetail(news) {
+        const container = document.getElementById('detailContent');
+        const cat = categoryConfig[news.category] || { emoji: '📋' };
+        
+        container.innerHTML = `
+            <div class="detail-title">${news.title}</div>
+            <div class="detail-meta">
+                <div class="detail-meta-item">👤 ${news.uploader}</div>
+                <div class="detail-meta-item">🏫 ${currentClass}</div>
+                <div class="detail-meta-item">📅 ${news.date}</div>
+            </div>
+            
+            <a href="${news.content}" target="_blank" class="detail-link">🔗 查看原文</a>
+            
+            <div class="detail-section">
+                <h4>📝 推荐理由</h4>
+                <p>${news.reason}</p>
+            </div>
+            
+            <div class="detail-section">
+                <h4>📚 链接教材知识</h4>
+                <p>${news.textbook}</p>
+            </div>
+            
+            <div class="comments-section">
+                <div class="comments-header">
+                    <div class="comments-title">💬 留言区</div>
+                    <span class="comments-count">${news.comments.length}</span>
+                </div>
+                
+                <div class="comments-list" id="commentsList-${news.id}">
+                    ${news.comments.length === 0 ? 
+                        '<p style="text-align:center; color:#a0aec0; padding:30px;font-size:0.95rem;">暂无留言，快来发表你的看法吧~</p>' :
+                        news.comments.map(c => `
+                            <div class="comment-item">
+                                <div class="comment-header">
+                                    <div class="comment-author">
+                                        <div class="comment-avatar">${c.author.charAt(0)}</div>
+                                        <span class="comment-author-name">${c.author}</span>
+                                        ${c.role === 'teacher' ? '<span class="teacher-badge">老师</span>' : ''}
+                                    </div>
+                                    <span class="comment-time">${c.time}</span>
+                                </div>
+                                <div class="comment-content">${c.content}</div>
+                                <div class="comment-actions">
+                                    <button class="like-btn" onclick="likeComment(${news.id}, ${c.id})">❤️ ${c.likes}</button>
+                                </div>
+                            </div>
+                        `).join('')
+                    }
+                </div>
+                
+                <div class="comment-input-area">
+                    <textarea id="commentInput-${news.id}" placeholder="写下你的看法..."></textarea>
+                    <button onclick="addComment(${news.id})">发送</button>
+                </div>
+            </div>
+        `;
+    }
+    
+    // ======================== 交互函数 ========================
+    function toggleMenu(newsId) {
+        const menu = document.getElementById(`menu-${newsId}`);
+        menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+        
+        // 点击其他地方关闭菜单
+        document.addEventListener('click', function closeMenu() {
+            menu.style.display = 'none';
+            document.removeEventListener('click', closeMenu);
+        });
+    }
+    
+    function pinNews(newsId) {
+        const news = publishedNews.find(n => n.id === newsId);
+        if (news) {
+            news.isPinned = !news.isPinned;
+            saveData();
+            renderCards();
+            // 重新渲染详情
+            if (selectedNewsId === newsId) {
+                renderDetail(news);
+            }
+        }
+    }
+    
+    function deleteNews(newsId) {
+        if (!confirm('确定要删除这篇新闻吗？')) return;
+        
+        publishedNews = publishedNews.filter(n => n.id !== newsId);
+        saveData();
+        
+        if (selectedNewsId === newsId) {
+            closeDetail();
+        }
+        renderCards();
+    }
+    
+    function closeDetail() {
+        const rightPanel = document.getElementById('rightPanel');
+        rightPanel.classList.remove('open');
+        selectedNewsId = null;
+        renderCards();
+        
+        document.getElementById('detailContent').innerHTML = `
+            <div style="text-align:center; color:#a0aec0; padding:80px 20px;">
+                <div style="font-size:3rem;margin-bottom:16px;">📰</div>
+                <p style="font-size:1.1rem;">点击左侧卡片查看详情</p>
+            </div>
+        `;
+    }
+    
+    function addComment(newsId) {
+        const input = document.getElementById(`commentInput-${newsId}`);
+        const content = input.value.trim();
+        if (!content) return;
+        
+        const news = publishedNews.find(n => n.id === newsId);
+        if (news) {
+            news.comments.push({
+                id: Date.now(),
+                author: '同学',
+                role: 'student',
+                content: content,
+                time: new Date().toLocaleString(),
+                likes: 0
+            });
+            saveData();
+            renderDetail(news);
+            input.value = '';
+        }
+    }
+    
+    function likeComment(newsId, commentId) {
+        const news = publishedNews.find(n => n.id === newsId);
+        if (news) {
+            const comment = news.comments.find(c => c.id === commentId);
+            if (comment) {
+                comment.likes++;
+                saveData();
+                renderDetail(news);
+            }
+        }
+    }
+    
+    function openUploadModal() {
+        document.getElementById('uploadModal').classList.add('open');
+    }
+    
+    function closeUploadModal() {
+        document.getElementById('uploadModal').classList.remove('open');
+        // 重置表单
+        document.getElementById('modalUploader').value = '';
+        document.getElementById('modalTitle').value = '';
+        document.getElementById('modalCategory').value = '';
+        document.getElementById('modalLink').value = '';
+        document.getElementById('modalReason').value = '';
+        document.getElementById('modalTextbook').value = '';
+    }
+    
+    function submitNews() {
+        const uploader = document.getElementById('modalUploader').value.trim();
+        const title = document.getElementById('modalTitle').value.trim();
+        const category = document.getElementById('modalCategory').value;
+        const link = document.getElementById('modalLink').value.trim();
+        const reason = document.getElementById('modalReason').value.trim();
+        const textbook = document.getElementById('modalTextbook').value.trim();
+        
+        if (!uploader || !title || !category || !link || !reason) {
+            alert('请填写所有必填项');
+            return;
+        }
+        
+        if (reason.length > 200) {
+            alert('推荐理由不能超过200字');
+            return;
+        }
+        
+        pendingNews.push({
+            title,
+            category,
+            content: link,
+            reason,
+            textbook,
+            uploader: uploader,
+            date: new Date().toISOString().split('T')[0]
+        });
+        
+        saveData();
+        alert('✅ 已提交，等待教师审核');
+        closeUploadModal();
+    }
+    
+    function openTeacherModal() {
+        window.location.href = 'AI时政思享台 - 教师版.html';
+    }
+    
+    // 搜索防抖
+    let searchTimeout = null;
+    function handleSearch() {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+            searchKeyword = document.getElementById('searchInput').value;
+            displayCount = 6;
+            renderCards();
+        }, 300);
+    }
+    
+    function loadMore() {
+        displayCount += 6;
+        renderCards();
+    }
+    
+    // ======================== 数字人聊天 ========================
+    function addChatMessage(role, text) {
+        const chatMessages = document.getElementById('chatMessages');
+        const msgDiv = document.createElement('div');
+        if (role === 'user') {
+            msgDiv.innerHTML = `<strong>你：</strong><br>${text}`;
+        } else {
+            msgDiv.innerHTML = `<strong>小思：</strong><br>${text.replace(/\n/g, '<br>')}`;
+        }
+        chatMessages.appendChild(msgDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+    
+    async function sendChatMessage() {
+        const input = document.getElementById('chatInput');
+        const question = input.value.trim();
+        if (!question) return;
+        
+        addChatMessage('user', question);
+        input.value = '';
+        
+        const thinkingDiv = document.createElement('div');
+        thinkingDiv.innerHTML = '<strong>小思：</strong><br>🤔 思考中...';
+        document.getElementById('chatMessages').appendChild(thinkingDiv);
+        
+        const reply = await callRealAI(question);
+        thinkingDiv.remove();
+        addChatMessage('ai', reply);
+    }
+    
+    // ======================== 初始化 ========================
+    function init() {
+        loadData();
+        
+        // 分类按钮
+        document.querySelectorAll('.category-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentCategory = btn.dataset.category;
+                displayCount = 6;
+                renderCards();
+            });
+        });
+        
+        // 搜索
+        document.getElementById('searchInput').addEventListener('input', handleSearch);
+        document.getElementById('searchBtn').addEventListener('click', handleSearch);
+        
+        // 加载更多
+        document.getElementById('loadMore').querySelector('button').addEventListener('click', loadMore);
+        
+        // 上传
+        document.getElementById('uploadBtn').addEventListener('click', openUploadModal);
+        document.getElementById('closeUploadModal').addEventListener('click', closeUploadModal);
+        document.getElementById('cancelUpload').addEventListener('click', closeUploadModal);
+        document.getElementById('submitNews').addEventListener('click', submitNews);
+        
+        // 教师入口
+        document.getElementById('teacherBtn').addEventListener('click', openTeacherModal);
+        
+        // 详情面板
+        document.getElementById('closeDetailBtn').addEventListener('click', closeDetail);
+        
+        // 数字人
+        document.getElementById('openChatBtn').addEventListener('click', () => {
+            document.getElementById('chatWindow').style.display = 'flex';
+        });
+        document.getElementById('closeChatBtn').addEventListener('click', () => {
+            document.getElementById('chatWindow').style.display = 'none';
+        });
+        document.getElementById('sendChatBtn').addEventListener('click', sendChatMessage);
+        document.getElementById('chatInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendChatMessage();
+        });
+        
+        // 数字人拖动功能
+        const floatAi = document.querySelector('.float-ai');
+        const aiButton = document.getElementById('openChatBtn');
+        let isDragging = false;
+        let dragOffsetX, dragOffsetY;
+        
+        aiButton.style.cursor = 'move';
+        aiButton.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            dragOffsetX = e.clientX - floatAi.getBoundingClientRect().left;
+            dragOffsetY = e.clientY - floatAi.getBoundingClientRect().top;
+        });
+        document.addEventListener('mousemove', (e) => {
+            if (isDragging) {
+                floatAi.style.left = (e.clientX - dragOffsetX) + 'px';
+                floatAi.style.top = (e.clientY - dragOffsetY) + 'px';
+                floatAi.style.right = 'auto';
+                floatAi.style.bottom = 'auto';
+            }
+        });
+        document.addEventListener('mouseup', () => {
+            isDragging = false;
+        });
+        
+        // 点击模态框外部关闭
+        document.getElementById('uploadModal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('uploadModal')) closeUploadModal();
+        });
+        
+        // 渲染初始状态
+        renderCards();
+    }
+    
+    // 启动
+    init();
+</script>
+</body>
+</html>
